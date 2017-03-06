@@ -7,6 +7,9 @@ import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * The DelayQueue blocks the elements internally until a certain delay has expired. 
+ * The elements must implement the interface java.util.concurrent.Delayed.
+ * 
  * 测试DelayQueue，模拟一个缓存
  * @author liqiankun
  *

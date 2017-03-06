@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * The DelayQueue blocks the elements internally until a certain delay has expired. 
+ * The elements must implement the interface java.util.concurrent.Delayed.
+ * 
  * @author liqiankun
  *
  */
@@ -75,7 +78,9 @@ public class DelayedItem<T> implements Delayed {
 	}
 
 	/**
-	 * (non-Javadoc)
+	 * The value returned by the getDelay() method should be the delay remaining before this element can be released.
+	 *  If 0 or a negative value is returned, the delay will be considered expired, 
+	 *  and the element released at the next take() etc.
 	 * 
 	 * @see java.util.concurrent.Delayed#getDelay(java.util.concurrent.TimeUnit)
 	 */
