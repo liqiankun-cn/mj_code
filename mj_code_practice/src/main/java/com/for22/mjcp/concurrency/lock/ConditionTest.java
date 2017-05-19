@@ -50,6 +50,8 @@ public class ConditionTest {
 			
 		},"singalThread");
 		wt2.start();
+		
+		
 	}
 
 }
