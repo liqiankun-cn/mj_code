@@ -36,7 +36,7 @@ public class LambdaTest {
 	
 	public void test5(){
 		List<A> as = Arrays.asList(new A("1"),new A("2"),new A("3"));
-		as.stream().filter(s -> s.equals("2")).forEach((a) -> System.out.println(a));
+		as.stream().filter(s -> s.getA().equals("2")).forEach(a -> System.out.println(a.getA()));
 	}
 	/**
 	 * @param args
