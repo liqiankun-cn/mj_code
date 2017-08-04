@@ -18,7 +18,7 @@ public class ThreadId {
 	public String get() {
 		String name = Thread.currentThread().getName();
 		if(null == threadId.get()){
-			System.out.println(name +",threadId.get() == null");
+			//System.out.println(name +",threadId.get() == null");
 			set();
 			threadId.set(""+nextId.get());
 		}
