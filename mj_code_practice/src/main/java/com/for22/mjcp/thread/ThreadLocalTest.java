@@ -33,6 +33,7 @@ public class ThreadLocalTest {
 		}
 		ls.forEach(lc -> System.out.println(lc));
 		
+		
 	}
 
 	 
