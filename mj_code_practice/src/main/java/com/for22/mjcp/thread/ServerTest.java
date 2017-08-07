@@ -1,5 +1,6 @@
 package com.for22.mjcp.thread;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class ServerTest {
@@ -17,6 +18,23 @@ public class ServerTest {
 				}
 			}.start();
 			
+		}
+		
+		
+		try {
+			String command = "E:/test.bat";
+			Process process = 
+					Runtime.getRuntime().exec(command);
+					System.getSecurityManager();
+					System.out.println("---");
+					process.waitFor();
+//			System.out.println(process.getInputStream().read(new byte[1024]));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
