@@ -1,0 +1,69 @@
+zzzzzzzz
+z  z   z
+z  z 3 z
+z  z 3zz
+zz     z
+z   43 z
+z  zz  z
+zzzzzzzz
+
+zzzzzzzz
+z  z   z
+z  z 3 z
+z  z 3zz
+zz     z
+z  421 z
+z  zz  z
+zzzzzzzz
+
+zzzzzzzz
+z  z   z
+z  z 3 z
+z  z 3zz
+zz   4 z
+z  2 1 z
+z  zz  z
+zzzzzzzz
+
+zzzzzzzz
+z  z   z
+z  z 3 z
+z  z 1zz
+zz  42 z
+z  2 1 z
+z  zz  z
+zzzzzzzz
+
+zzzzzzzz
+z  z   z
+z  z 3 z
+z  z 1zz
+zz 42  z
+z  2 1 z
+z  zz  z
+zzzzzzzz
+
+zzzzzzzz
+z  z   z
+z  z 3 z
+z  z 1zz
+zz 2   z
+z 42 1 z
+z  zz  z
+zzzzzzzz
+
+zzzzzzzz
+z  z   z
+z  z 3 z
+z  z 1zz
+zz 2   z
+z 2  1 z
+z4 zz  z
+zzzzzzzz
+
+
+基数：448
+步数：7
+耗时：64ms
+heap used:7M
+non heap used:5M

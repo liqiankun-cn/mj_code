@@ -1,8 +1,14 @@
 package com.for22.mjcp.push;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.nio.file.*;
+import java.nio.file.attribute.FileAttribute;
+import java.util.*;
 
 /**
  * The Type PushBox
@@ -14,10 +20,20 @@ import java.util.List;
 public class PushBox {
 
     public static void main(String[] args) {
-        pushbox();
+        int stage = 2;
+        byte[][] map = getMapFromFile(stage);
+        if(null != map) {
+            for (byte[] b : map) {
+                if(null != b) {
+                    System.out.println(new String(b));
+                }
+            }
+//            System.out.println(map.length);
+        }
+        pushbox(map,stage);
     }
 
-    private static void pushbox() {
+    private static void pushbox(byte[][] b,int stage) {
         long start = System.currentTimeMillis();
 //        1：是否存在目的地        2：是否存在箱子        4：是否存在人  0:空地  3：箱子在目的地   5：人在目的地
 //        byte[][] b = new byte[][]{
@@ -29,15 +45,15 @@ public class PushBox {
 //                {'z','1','2','0','0','z','0','z'},
 //                {'z','1','0','0','0','2','0','z'},
 //                {'z','z','z','z','z','z','z','z'}};
-        byte[][] b = new byte[][]{
-                {'z','z','z','z','z','z','z','z'},
-                {'z','0','0','0','z','1','0','z'},
-                {'z','1','0','0','2','0','0','z'},
-                {'z','z','2','z','z','0','0','z'},
-                {'z','0','0','z','z','2','z','z'},
-                {'z','0','0','4','0','0','0','z'},
-                {'z','0','1','z','0','0','0','z'},
-                {'z','z','z','z','z','z','z','z'}};
+//        byte[][] b = new byte[][]{
+//                {'z','z','z','z','z','z','z','z'},
+//                {'z','0','0','0','z','1','0','z'},
+//                {'z','1','0','0','2','0','0','z'},
+//                {'z','z','2','z','z','0','0','z'},
+//                {'z','0','0','z','z','2','z','z'},
+//                {'z','0','0','4','0','0','0','z'},
+//                {'z','0','1','z','0','0','0','z'},
+//                {'z','z','z','z','z','z','z','z'}};
 //        byte[][] b = new byte[][]{
 //                {'z','z','z','z','z','z','z'},
 //                {'z','0','1','0','3','0','z'},
@@ -62,22 +78,80 @@ public class PushBox {
         }
         int cout = 0;
         while(null != end){
+            writeAnswer(stage,end.toString()+"\n");
             System.out.println(end);
             end = end.getParent();
             cout++;
         }
+        writeAnswer(stage,"\n基数："+way.size());
         System.out.println("基数："+way.size());
 //        for (Point w:way) {
 //            System.out.println(w);
 //        }
+        writeAnswer(stage,"\n步数："+cout);
         System.out.println("步数："+cout);
         long endTime = System.currentTimeMillis();
+        writeAnswer(stage,"\n耗时："+(endTime -start)+"ms");
         System.out.println("耗时："+(endTime -start)+"ms");
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+
+//        System.out.println("heap max:"+changeMem(memoryMXBean.getHeapMemoryUsage().getMax()));
+//        System.out.println("heap init:"+changeMem(memoryMXBean.getHeapMemoryUsage().getInit()));
+        writeAnswer(stage,"\nheap used:"+changeMem(memoryMXBean.getHeapMemoryUsage().getUsed()));
+        System.out.println("heap used:"+changeMem(memoryMXBean.getHeapMemoryUsage().getUsed()));
+//        System.out.println("non heap init:"+changeMem(memoryMXBean.getNonHeapMemoryUsage().getInit()));
+        writeAnswer(stage,"\nnon heap used:"+changeMem(memoryMXBean.getNonHeapMemoryUsage().getUsed()));
+        System.out.println("non heap used:"+changeMem(memoryMXBean.getNonHeapMemoryUsage().getUsed()));
     }
 
-    public static byte[][] getMapFromFile(){
-
-        return  null;
+    public static byte[][] getMapFromFile(int stage){
+        byte[][] result ;
+//        Path path = Paths.get("D:\\pers\\stu\\pushbox",stage+".txt");
+        Path path = Paths.get("mj_code_practice/src/main/static",stage+".txt");
+        try {
+            System.out.println(path.toRealPath().toString());
+            List<String> list = Files.readAllLines(path);
+            result = new byte[list.size()][];
+            for(int i = 0 ;i<list.size();i++){
+                String s = list.get(i);
+                if(StringUtils.isNotEmpty(s)){
+                    byte[] b = s.getBytes();
+                    result[i] = b;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return  result;
     }
+
+    private static String changeMem(long mem){
+        Map<Integer,String> mapped = new HashMap<Integer, String>(){{put(0,"b");put(1,"B");put(2,"M");put(3,"G");}};
+        int i = 0;
+        while(mem > 1024){
+            mem = mem/1024;
+            i++;
+        }
+        return mem+mapped.get(i);
+    }
+
+    private static void writeAnswer(int stage,String content){
+        Path path = Paths.get("mj_code_practice/src/main/static",stage+"_answer.txt");
+        File f = new File(path.toUri());
+        if(!f.exists()){
+            try {
+                Files.createFile(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            Files.write( path,content.getBytes(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
  

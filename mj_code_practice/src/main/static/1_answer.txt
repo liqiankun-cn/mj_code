@@ -1,0 +1,46 @@
+zzzzzzz
+zz   zz
+z z3  z
+z 334 z
+z     z
+zz   zz
+zzzzzzz
+
+zzzzzzz
+zz   zz
+z z3  z
+z 312 z
+z   4 z
+zz   zz
+zzzzzzz
+
+zzzzzzz
+zz   zz
+z z3  z
+z 31  z
+z 4 2 z
+zz   zz
+zzzzzzz
+
+zzzzzzz
+zz   zz
+z z34 z
+z 11  z
+z 2 2 z
+zz   zz
+zzzzzzz
+
+zzzzzzz
+zz   zz
+z z12 z
+z 11  z
+z 242 z
+zz   zz
+zzzzzzz
+
+
+基数：135
+步数：5
+耗时：40ms
+heap used:5M
+non heap used:5M
