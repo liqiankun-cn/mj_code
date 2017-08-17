@@ -21,19 +21,19 @@ public class Point {
     public static final byte ManAtTermini = '5';
     public static final byte Wall = 'z';
 
-    private List<XY> manlist;
+    private List<XY> manlist;//人可达的位置
 
-    private byte[][] boxMap;
+    private byte[][] boxMap;//地图
 
-    private List<Point> sons;
+    private List<Point> sons;//子地图
 
-    private List<XY> boxs;
+    private List<XY> boxs;//箱子位置
 //
-    private List<XY> turnels;
+    private List<XY> turnels;//角落 // TODO: 2017/8/17 可优化，角落是固定的
 
-    private XY man;
+    private XY man;//人的位置
 
-    private Point parent;
+    private Point parent;//父地图
 
     public Point(byte[][] boxMap,Point parent,int x,int y) {
         sons = new ArrayList<>();
@@ -49,13 +49,6 @@ public class Point {
             man = manlist.get(0);
         }
 
-    }
-
-
-    public void printMap(){
-        for(byte[] bt : boxMap){
-            System.out.println(new String(bt).replaceAll("0"," "));
-        }
     }
 
     @Override
