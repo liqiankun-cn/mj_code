@@ -1,6 +1,6 @@
 package com.for22.mjcp.push;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * The Type Point
@@ -21,17 +21,34 @@ public class Point {
     public static final byte ManAtTermini = '5';
     public static final byte Wall = 'z';
 
+    private List<XY> manlist;
+
     private byte[][] boxMap;
 
     private List<Point> sons;
 
-    private Man man;
+    private List<XY> boxs;
+//
+    private List<XY> turnels;
 
-    private Box[] boxs;
+    private XY man;
 
-    public Point(byte[][] boxMap) {
-        initMap(boxMap,-1,-1);
+    private Point parent;
+
+    public Point(byte[][] boxMap,Point parent,int x,int y) {
+        sons = new ArrayList<>();
+        manlist = new ArrayList<>();
+        boxs = new ArrayList<>();
+        turnels = new ArrayList<>();
+        this.parent = parent;
         this.boxMap = boxMap;
+        initMap(boxMap);
+        if(x>1 && y>1) {
+            man = new XY(x, y);
+        }else{
+            man = manlist.get(0);
+        }
+
     }
 
 
@@ -41,39 +58,90 @@ public class Point {
         }
     }
 
-    private void initMap(byte[][] boxMap,int x,int y){
-        if(x < 0) {
-            int[] manxy = getFirstXy(boxMap);
-            if (null == manxy) {
-                System.out.println("地图不合规，没人");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for(byte[] bt : boxMap){
+            sb.append(new String(bt).replaceAll("0"," ")).append("\n");
+        }
+        return sb.toString();
+    }
+
+    private void initMap(byte[][] boxMap){
+        getFirstXy(boxMap);
+
+        for(int i=0 ;i<manlist.size() ;i++) {
+            XY t = manlist.get(i);
+            if (canStep(boxMap[t.x - 1][t.y])) {
+//                boxMap[t.x - 1][t.y] += 4;
+                XY up = new XY(t.x-1,t.y);
+                if(!manlist.contains(up)) {
+                    manlist.add(up);
+                }
             }
-            x = manxy[0];
-            y = manxy[1];
-            if (x < 1 || y < 1) {
-                System.out.println("地图不合规，墙壁不对");
+            if (canStep(boxMap[t.x + 1][t.y])) {
+//                boxMap[t.x + 1][t.y] += 4;
+//                manlist.add(new XY(t.x+1,t.y));
+                XY up = new XY(t.x+1,t.y);
+                if(!manlist.contains(up)) {
+                    manlist.add(up);
+                }
+            }
+            if (canStep(boxMap[t.x][t.y - 1])) {
+//                boxMap[t.x][t.y - 1] += 4;
+//                manlist.add(new XY(t.x,t.y-1));
+                XY up = new XY(t.x,t.y-1);
+                if(!manlist.contains(up)) {
+                    manlist.add(up);
+                }
+            }
+            if (canStep(boxMap[t.x][t.y + 1])) {
+//                boxMap[t.x][t.y + 1] += 4;
+//                manlist.add(new XY(t.x,t.y+1));
+                XY up = new XY(t.x,t.y+1);
+                if(!manlist.contains(up)) {
+                    manlist.add(up);
+                }
             }
         }
-        if(canStep(boxMap[x-1][y])) { boxMap[x-1][y] += 4;initMap(boxMap, x-1, y);}
-        if(canStep(boxMap[x+1][y])) { boxMap[x+1][y] += 4;initMap(boxMap, x+1, y);}
-        if(canStep(boxMap[x][y-1])) { boxMap[x][y-1] += 4;initMap(boxMap, x, y-1);}
-        if(canStep(boxMap[x][y+1])) { boxMap[x][y+1] += 4;initMap(boxMap, x, y+1);}
     }
 
     private boolean canStep(byte te){
         return te == Empty || te == Termini;
     }
 
-    private int[] getFirstXy(byte[][] boxMap){
+    private void getFirstXy(byte[][] boxMap){
         for(int i = 0;i<boxMap.length ;i++){
             byte[] bt = boxMap[i];
             for(int j = 0;j<bt.length;j++){
                 byte b = bt[j];
+                XY e = new XY(i, j);
                 if(b == HasMan || b == ManAtTermini){
-                    return new int[]{i,j};
+                    manlist.add(e);
+                }
+                if(b == HasBox || b == BoxAtTermini){
+                    boxs.add(e);
+                }
+                if(isTurnal(i,j)){
+                    turnels.add(e);
                 }
             }
         }
-        return null;
+        return ;
+    }
+
+    public List<XY> getTerminis(){
+        List<XY> terminis = new ArrayList<>();
+        for(int i = 0;i<boxMap.length ;i++){
+            byte[] bt = boxMap[i];
+            for(int j = 0;j<bt.length;j++) {
+                byte b = bt[j];
+                if(b == Termini || b == ManAtTermini || b == BoxAtTermini){
+                    terminis.add(new XY(i,j));
+                }
+            }
+        }
+        return terminis;
     }
 
     @Override
@@ -82,7 +150,7 @@ public class Point {
         int i = 1;
         for(byte[] bt :boxMap){
             for(byte b : bt){
-                hashCode += (int) (Math.sin(i)*b) ;
+                hashCode += i ^ (hashCode<<(b%10));
                 i++;
             }
         }
@@ -122,6 +190,181 @@ public class Point {
         return true;
     }
 
+    public Point push(HashSet<Point> list,List<Wall> walls,List<XY> terminis){
+        int i = 3;
+        Point p = null;
+        for(XY b : boxs){
+            XY up = new XY(b.x-1,b.y);
+            if(manlist.contains(up)
+                    &&(boxMap[b.x+1][b.y] != Wall && boxMap[b.x+1][b.y] != HasBox && boxMap[b.x+1][b.y] != BoxAtTermini)){
+                p = push(list, walls, terminis, b.x,b.y,b.x+1,b.y);
+                if(null != p) return p;
+            }
+            XY down = new XY(b.x+1,b.y);
+            if(manlist.contains(down)
+                    &&(boxMap[b.x-1][b.y] != Wall && boxMap[b.x-1][b.y] != HasBox && boxMap[b.x-1][b.y] != BoxAtTermini)){
+                p = push(list, walls, terminis, b.x,b.y,b.x-1,b.y);
+                if(null != p) return p;
+            }
+            XY left = new XY(b.x,b.y-1);
+            if(manlist.contains(left)
+                    &&(boxMap[b.x][b.y+1] != Wall && boxMap[b.x][b.y+1] != HasBox && boxMap[b.x][b.y+1] != BoxAtTermini)){
+                p = push(list, walls, terminis, b.x,b.y,b.x,b.y+1);
+                if(null != p) return p;
+            }
+            XY right = new XY(b.x,b.y+1);
+            if(manlist.contains(right)
+                    &&(boxMap[b.x][b.y-1] != Wall && boxMap[b.x][b.y-1] != HasBox && boxMap[b.x][b.y-1] != BoxAtTermini)){
+                p = push(list, walls, terminis, b.x,b.y,b.x,b.y-1);
+                if(null != p) return p;
+            }
+        }
+        return null;
+    }
+
+    private Point push(HashSet<Point> list, List<Wall> walls, List<XY> terminis, int x,int y,int nx,int ny) {
+        byte[][] nb = mapClone(boxMap);
+        //box move
+        nb[x][y] = (byte) (nb[x][y]-2 );
+        if(nb[nx][ny] > BoxAtTermini){
+            nb[nx][ny] = (byte) (nb[nx][ny] - 4 + 2);
+        }else{
+            nb[nx][ny] = (byte) (nb[nx][ny] + 2);
+        }
+        //man move
+        nb[man.x][man.y] = (byte) (nb[man.x][man.y]-4);
+        nb[x][y] = (byte) (nb[x][y]+4 );
+        Point sonU = new Point(nb,this,x,y);
+        if(!sonU.isDead(walls,terminis) && !list.contains(sonU)){
+            sons.add(sonU);
+            list.add(sonU);
+            if(sonU.isFinished(terminis)){
+                return sonU;
+            }
+        }
+        return null;
+    }
+
+    public boolean isFinished(List<XY> terminis){
+        for(XY t : terminis){
+            if(boxMap[t.x][t.y] != BoxAtTermini){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isDead(List<Wall> walls,List<XY> terminis){
+        for(int i=0;i<boxs.size();i++){
+            XY boxi = boxs.get(i);
+            if(!terminis.contains(boxi) && isTurnal(boxi.x,boxi.y)){
+                return true;
+            }
+        }
+        for(Wall w : walls){
+            int boxNum = 0;
+            for(int i = w.begin;i<=w.end;i++){
+                if (w.isX){
+                    if(boxMap[w.lineN][i] == BoxAtTermini || boxMap[w.lineN][i] == HasBox) boxNum++;
+                }
+                else {
+                    if(boxMap[i][w.lineN] == BoxAtTermini || boxMap[i][w.lineN] == HasBox) boxNum++;
+                }
+            }
+            if(boxNum > w.terminiCount){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTurnal(int x,int y){
+        return boxMap[x][y] != Wall && ((boxMap[x-1][y] == Wall && boxMap[x][y-1] == Wall)
+                || (boxMap[x][y-1] == Wall && boxMap[x+1][y] == Wall)
+                || (boxMap[x+1][y] == Wall && boxMap[x][y+1] == Wall)
+                || (boxMap[x][y+1] == Wall && boxMap[x-1][y] == Wall));
+    }
+
+    public List<Wall> initWall(){
+        List<Wall> walls = new ArrayList<>();
+        for(int i = 0;i<turnels.size();i++){
+            XY xyi = turnels.get(i);
+            for(int j=i+1;j<turnels.size();j++){
+                XY xyj = turnels.get(j);
+                if(xyi.x == xyj.x){
+                    boolean xWall = true;
+                    boolean xUWall = true;
+                    boolean xDWall = true;
+                    for(int k=xyi.y;k<=xyj.y;k++){
+                        if(boxMap[xyi.x-1][k] != Wall){
+                            xUWall = false;
+                            break;
+                        }
+                    }
+                    for (int k = xyi.y; k <= xyj.y; k++) {
+                        if (boxMap[xyi.x + 1][k] != Wall) {
+                            xDWall = false;
+                            break;
+                        }
+                    }
+                    for (int k = xyi.y; k <= xyj.y; k++) {
+                        if (boxMap[xyi.x][k] == Wall) {
+                            xWall = false;
+                            break;
+                        }
+                    }
+                    if((xDWall ||xUWall) && xWall) {
+                        int terminiNum = 0;
+                        for (int k = xyi.y; k <= xyj.y; k++) {
+                            if (boxMap[xyi.x][k] == Termini || boxMap[xyi.x][k] == BoxAtTermini || boxMap[xyi.x][k] == ManAtTermini) terminiNum++;
+                        }
+                        walls.add(new Wall(true, xyi.y, xyj.y, xyi.x, terminiNum));
+                    }
+                }
+                if(xyi.y == xyj.y){
+                    boolean yWall = true;
+                    boolean yLWall = true;
+                    boolean yRWall = true;
+                    for(int k=xyi.x;k<=xyj.x;k++){
+                        if(boxMap[k][xyi.y-1] != Wall) {
+                            yLWall = false;
+                            break;
+                        }
+                    }
+                    for (int k = xyi.x; k <= xyj.x; k++) {
+                        if (boxMap[k][xyi.y+1] != Wall) {
+                            yRWall = false;
+                            break;
+                        }
+                    }
+                    for (int k = xyi.x; k <= xyj.x; k++) {
+                        if (boxMap[k][xyi.y] == Wall) {
+                            yWall = false;
+                            break;
+                        }
+                    }
+                    if((yLWall || yRWall) && yWall) {
+                        int terminiNum = 0;
+                        for (int k = xyi.x; k <= xyj.x; k++) {
+                            if (boxMap[k][xyi.y] == Termini || boxMap[k][xyi.y] == BoxAtTermini || boxMap[k][xyi.y] == ManAtTermini) terminiNum++;
+                        }
+                        walls.add(new Wall(false, xyi.x, xyj.x, xyi.y, terminiNum));
+                    }
+                }
+
+            }
+        }
+        return walls;
+    }
+
+    private byte[][] mapClone(byte[][] o){
+        byte[][] b = new byte[o.length][];
+        for(int i = 0;i<o.length;i++){
+            b[i] = o[i].clone();
+        }
+        return b;
+    }
+
 
     public byte[][] getBoxMap() {
         return boxMap;
@@ -131,28 +374,66 @@ public class Point {
         this.boxMap = boxMap;
     }
 
-    public Man getMan() {
-        return man;
-    }
-
-    public void setMan(Man man) {
-        this.man = man;
-    }
-
-    public Box[] getBoxs() {
-        return boxs;
-    }
-
-    public void setBoxs(Box[] boxs) {
-        this.boxs = boxs;
-    }
-
     public List<Point> getSons() {
         return sons;
     }
 
     public void setSons(List<Point> sons) {
         this.sons = sons;
+    }
+
+    public List<XY> getBoxs() {
+        return boxs;
+    }
+
+    public List<XY> getTurnels() {
+        return turnels;
+    }
+
+    public Point getParent() {
+        return parent;
+    }
+
+    class XY {
+
+        private int x;
+        private int y;
+
+        public XY() {
+        }
+
+        public XY(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public int hashCode() {
+            return x*10+y;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(this == obj){
+                return true;
+            }
+            if(!(obj instanceof XY)){
+                return false;
+            }
+            if(this.hashCode() != obj.hashCode()){
+                return false;
+            }
+            XY t = (XY)obj;
+            return x == t.x && y == t.y;
+        }
+
+        @Override
+        public String toString() {
+            return "XY{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
+        }
     }
 }
  
