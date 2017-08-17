@@ -64,19 +64,25 @@ public class PushBox {
 //                {'z','z','z','z','z','z','z'}};
         Point point = new Point(b,null,-1,-1);
 //        point.printMap();
+        //终点是固定的，所以抽出来
         List<Point.XY> terminis = point.getTerminis();
+        //墙也是固定的
         List<Wall> walls = point.initWall();
+        //记录遍历的子地图
         HashSet<Point> way = new HashSet<>();
+        //待遍历的子地图
         LinkedList<Point> list = new LinkedList<>();
         way.add(point);
         list.add(point);
-        Point end = null;
+        Point end = null;//终点子地图
+        //广度优先遍历，计算箱子可推动的方向，并且推动后不是死局，则加入带遍历的list中
         while(list.size() > 0 && null == end){
             Point temp = list.pop();
             end = temp.push(way,walls,terminis);
             list.addAll(temp.getSons());
         }
         int cout = 0;
+        //通过终点子地图逆向获取parent得出路径
         while(null != end){
             writeAnswer(stage,end.toString()+"\n");
             System.out.println(end);
