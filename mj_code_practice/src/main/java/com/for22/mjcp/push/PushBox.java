@@ -20,7 +20,7 @@ import java.util.*;
 public class PushBox {
 
     public static void main(String[] args) {
-        int stage = 2;
+        int stage = 10;
         byte[][] map = getMapFromFile(stage);
         if(null != map) {
             for (byte[] b : map) {

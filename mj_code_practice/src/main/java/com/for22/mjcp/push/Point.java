@@ -147,6 +147,9 @@ public class Point {
                 i++;
             }
         }
+        for(XY t : manlist){
+            hashCode += (hashCode >>16) ^ t.hashCode();
+        }
         return hashCode;
     }
 
@@ -219,17 +222,19 @@ public class Point {
         byte[][] nb = mapClone(boxMap);
         //box move
         nb[x][y] = (byte) (nb[x][y]-2 );
-        if(nb[nx][ny] > BoxAtTermini){
-            nb[nx][ny] = (byte) (nb[nx][ny] - 4 + 2);
-        }else{
+//        if(nb[nx][ny] > BoxAtTermini){
+//            nb[nx][ny] = (byte) (nb[nx][ny] - 4 + 2);
+//        }else{
             nb[nx][ny] = (byte) (nb[nx][ny] + 2);
-        }
+//        }
         //man move
         nb[man.x][man.y] = (byte) (nb[man.x][man.y]-4);
         nb[x][y] = (byte) (nb[x][y]+4 );
         Point sonU = new Point(nb,this,x,y);
         if(!sonU.isDead(walls,terminis) && !list.contains(sonU)){
             sons.add(sonU);
+//            System.out.println(sonU);
+//            System.out.println(sonU.hashCode());
             list.add(sonU);
             if(sonU.isFinished(terminis)){
                 return sonU;
