@@ -59,13 +59,16 @@ public class TestClass {
 				}
 		}
 //		System.out.println(ar.age);
-
 		
+	}
+	public static void testLoad(){
+		String path = System.getProperty("java.class.path");
+		System.out.println(path);
 	}
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
 //		testClass1();
 		testClass2();
-		
+		testLoad();
 	}
 }
