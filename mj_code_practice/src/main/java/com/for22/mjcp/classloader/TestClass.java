@@ -6,69 +6,79 @@ package com.for22.mjcp.classloader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+//import java.lang.Integer;
 
-import org.apache.commons.lang3.ArchUtils;
+//import org.apache.commons.lang3.ArchUtils;
 
 /**
  * @author liqiankun
  *
  */
 public class TestClass {
-	public static void testClass1() throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	public static void testClass1() throws NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 
 		try {
+			//TestClass.class.getClassLoader().loadClass("java.lang.Integer");
 			System.out.println(Integer.MAX_VALUE);
-			System.out.println(Integer.MV);
+			// System.out.println(Integer.MV);
 			System.out.println(Integer.class.getClassLoader());
+			System.out.println(Float.class.getClassLoader());
 			System.out.println(TestClass.class.getClassLoader());
-			Class<?> cs = Class.forName("java.lang.Integer",true,TestClass.class.getClassLoader().getParent());
+
+			Class<?> cs = Class.forName("java.lang.Integer", true, TestClass.class.getClassLoader());
+			Field fm = cs.getDeclaredField("MAX_VALUE");
+			System.out.println(fm.getInt(fm));
 			System.out.println(cs.isLocalClass());
-			Constructor<?> c =	cs.getConstructor(int.class);
-			Integer it = (Integer)c.newInstance(1);
+			Constructor<?> c = cs.getConstructor(int.class);
+			Integer it = (Integer) c.newInstance(1);
 			System.out.println(it.toString());
-			Field[] fields =  cs.getDeclaredFields();
-			for(Field f :fields){
-//				if(f.getType().isAssignableFrom(Integer.class))
-					if(f.getType().isPrimitive() && f.getType()==int.class){
-						f.setAccessible(true);
-						System.out.println(f.getName()+":"+f.getInt(f));
-					}
+			Field[] fields = cs.getDeclaredFields();
+			for (Field f : fields) {
+				// if(f.getType().isAssignableFrom(Integer.class))
+				if (f.getType().isPrimitive() && f.getType() == int.class) {
+					f.setAccessible(true);
+					System.out.println(f.getName() + ":" + f.getInt(f));
+				}
 			}
 			Thread.sleep(800000);
-			//Integer in = (Integer)cs.newInstance();
-			//System.out.println(in.SIZE);
+			// Integer in = (Integer)cs.newInstance();
+			// System.out.println(in.SIZE);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 	}
-	
-	public static void testClass2() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		System.out.println(ArchUtils.class.getClassLoader());
+
+	public static void testClass2() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		// System.out.println(ArchUtils.class.getClassLoader());
 		Class<?> cs = Class.forName("org.apache.commons.lang3.ArchUtils");
-//		ArchUtils ar = (ArchUtils)cs.newInstance();
-		Field[] fields =  cs.getDeclaredFields();
-		for(Field f :fields){
-//			if(f.getType().isAssignableFrom(Integer.class))
-				if(f.getType().isPrimitive() && f.getType()==int.class){
-					f.setAccessible(true);
-					System.out.println(f.getName()+":"+f.getInt(f));
-				}
+		// ArchUtils ar = (ArchUtils)cs.newInstance();
+		Field[] fields = cs.getDeclaredFields();
+		for (Field f : fields) {
+			// if(f.getType().isAssignableFrom(Integer.class))
+			if (f.getType().isPrimitive() && f.getType() == int.class) {
+				f.setAccessible(true);
+				System.out.println(f.getName() + ":" + f.getInt(f));
+			}
 		}
-//		System.out.println(ar.age);
-		
+		// System.out.println(ar.age);
+
 	}
-	public static void testLoad(){
+
+	public static void testLoad() {
 		String path = System.getProperty("java.class.path");
 		System.out.println(path);
 	}
 
-	public static void main(String[] args) throws InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
-//		testClass1();
-		testClass2();
-		testLoad();
+	public static void main(String[] args)
+			throws InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException,
+			IllegalArgumentException, InvocationTargetException, ClassNotFoundException, NoSuchFieldException {
+		testClass1();
+		// testClass2();
+		// testLoad();
 	}
 }
