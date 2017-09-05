@@ -77,8 +77,8 @@ public class TestClass {
 	public static void main(String[] args)
 			throws InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException,
 			IllegalArgumentException, InvocationTargetException, ClassNotFoundException, NoSuchFieldException {
-		testClass1();
-		// testClass2();
-		// testLoad();
+		//testClass1();
+		 //testClass2();
+		 testLoad();
 	}
 }

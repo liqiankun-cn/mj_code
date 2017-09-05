@@ -4,6 +4,7 @@
 package com.for22.mjcp.classloader;
 
 /**
+ * 静态块
  * @author liqiankun
  *
  */
