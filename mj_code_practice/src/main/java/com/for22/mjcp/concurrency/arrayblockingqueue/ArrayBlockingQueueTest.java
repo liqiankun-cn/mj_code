@@ -27,6 +27,15 @@ public class ArrayBlockingQueueTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		try {
+			ArrayBlockingQueue<Integer> abq0 = new ArrayBlockingQueue<Integer>(1);
+			abq0.put(1);
+			abq0.put(2);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		ArrayBlockingQueue<Integer> abq = new ArrayBlockingQueue<Integer>(10);
 		Random r = new Random();
 		new Thread() {
