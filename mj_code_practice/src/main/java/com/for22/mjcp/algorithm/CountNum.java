@@ -94,7 +94,7 @@ public class CountNum {
 
     public static void main(String[] args) {
         long abegin = System.currentTimeMillis();
-        int a = countNum(50000,3);
+        int a = countNum(123465798,3);
         System.out.println(a);
         long aend = System.currentTimeMillis();
         System.out.println("耗时："+(aend-abegin)+"ms");
