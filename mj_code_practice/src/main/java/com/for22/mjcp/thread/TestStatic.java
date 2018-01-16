@@ -1,16 +1,8 @@
 package com.for22.mjcp.thread;
 
-/**
- * The Type TestStatic
- *
- * @author lx
- * @Description:
- * @Date 2017/9/19
- */
 public class TestStatic {
-
-    public static int add(int i,int b){
-        System.out.println("i("+i+")+b("+b+")="+(i+b));
+	public static int add(int i,int b){
+        //System.out.println("i("+i+")+b("+b+")="+(i+b));
         return i+b;
     }
 
@@ -30,4 +22,3 @@ public class TestStatic {
         }
     }
 }
- 
